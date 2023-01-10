@@ -1,4 +1,7 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
+using System;
+using System.Collections.Generic;
 using TabloidMVC.Models;
 using TabloidMVC.Utils;
 
@@ -50,6 +53,70 @@ namespace TabloidMVC.Repositories
                     reader.Close();
 
                     return userProfile;
+                }
+            }
+        }
+        //get all users
+        public List<UserProfile> GetAllUsers ()
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"SELECT Id, DisplayName, Email, CreateDateTime, UserTypeId 
+                                        FROM UserProfile;";
+
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        List<UserProfile> users = new List<UserProfile>();
+                        while (reader.Read())
+                        {
+                            UserProfile user = new UserProfile
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                                DisplayName = reader.GetString(reader.GetOrdinal("DisplayName")),
+                                Email  = reader.GetString(reader.GetOrdinal("Email")),
+                                UserTypeId= reader.GetInt32(reader.GetOrdinal("UserTypeId")),
+                               CreateDateTime = reader.GetDateTime(reader.GetOrdinal("CreateDateTime"))
+
+                            };
+                            users.Add(user);
+                        }
+                        return users;
+                    }
+                }
+            }
+        }
+        //create new user profile
+        public void AddUser(UserProfile user)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"INSERT INTO UserProfile (DisplayName, FirstName, LastName, 
+                                        Email, CreateDateTime, ImageLocation, UserTypeId)
+                                       OUTPUT INSERTED.ID
+                                        VALUES (@displayName, @firstName, @lastName, @email, 
+                                            @createDateTime, @imageLocation, @userTypeId);";
+                   user.CreateDateTime = DateTime.Now;
+                   user.UserTypeId = 2;
+
+                    cmd.Parameters.AddWithValue("@displayName", user.DisplayName);
+                    cmd.Parameters.AddWithValue("@firstName", user.FirstName);
+                    cmd.Parameters.AddWithValue("@lastName", user.LastName);
+                    cmd.Parameters.AddWithValue("@createDateTime",user.CreateDateTime);
+                    cmd.Parameters.AddWithValue("@email", user.Email);
+                    cmd.Parameters.AddWithValue("@imageLocation", DbUtils.ValueOrDBNull( user.ImageLocation));
+                    cmd.Parameters.AddWithValue("@userTypeId", user.UserTypeId);
+                    
+                    
+                 
+                    user.Id   = (int)cmd.ExecuteScalar();
+                
+
                 }
             }
         }
