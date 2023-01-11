@@ -218,7 +218,10 @@ namespace TabloidMVC.Repositories
                     SET
                         Title = @title,
                         Content = @content,
-                        "
+                        ImageLocation = @imageLocation,
+                        CategoryId = @categoryId,
+                        PublishDateTime = @publishDateTime
+                        ";
                 }
             }
         }
