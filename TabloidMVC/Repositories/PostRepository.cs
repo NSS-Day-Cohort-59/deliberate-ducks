@@ -204,7 +204,6 @@ namespace TabloidMVC.Repositories
                 }
             };
         }
-
         public void UpdatePost(Post post)
         {
             using (SqlConnection conn = Connection)
@@ -221,9 +220,18 @@ namespace TabloidMVC.Repositories
                         ImageLocation = @imageLocation,
                         CategoryId = @categoryId,
                         PublishDateTime = @publishDateTime
-                        ";
+                    WHERE Id = @id";
+
+                    cmd.Parameters.AddWithValue("@title", post.Title);
+                    cmd.Parameters.AddWithValue("@content", post.Content);
+                    cmd.Parameters.AddWithValue("@imageLocation", post.ImageLocation == null ? DBNull.Value : post.ImageLocation);
+                    cmd.Parameters.AddWithValue("@categoryId", post.CategoryId);
+                    cmd.Parameters.AddWithValue("@publishDateTime", post.PublishDateTime == null ? DBNull.Value : post.PublishDateTime);
+                
+                    cmd.ExecuteNonQuery();
                 }
             }
         }
+
     }
 }
