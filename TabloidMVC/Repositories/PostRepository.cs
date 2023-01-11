@@ -12,6 +12,7 @@ namespace TabloidMVC.Repositories
     public class PostRepository : BaseRepository, IPostRepository
     {
         public PostRepository(IConfiguration config) : base(config) { }
+
         public List<Post> GetAllPublishedPosts()
         {
             using (var conn = Connection)
@@ -33,7 +34,8 @@ namespace TabloidMVC.Repositories
                               LEFT JOIN Category c ON p.CategoryId = c.id
                               LEFT JOIN UserProfile u ON p.UserProfileId = u.id
                               LEFT JOIN UserType ut ON u.UserTypeId = ut.id
-                        WHERE IsApproved = 1 AND PublishDateTime < SYSDATETIME()";
+                        WHERE IsApproved = 1 AND PublishDateTime < SYSDATETIME()
+                        ORDER BY p.PublishDateTime DESC";
                     var reader = cmd.ExecuteReader();
 
                     var posts = new List<Post>();
