@@ -24,10 +24,11 @@ namespace TabloidMVC.Controllers
 
         public IActionResult Index()
         {
+
             int userId = GetCurrentUserProfileId();
             var posts = _postRepository.GetAllPublishedPosts();
             List<Post> postsList = new List<Post>();
-            foreach (Post post in posts )
+            foreach (Post post in posts)
             {
                 if (post.UserProfileId == userId)
                 {
@@ -71,7 +72,7 @@ namespace TabloidMVC.Controllers
                 _postRepository.Add(vm.Post);
 
                 return RedirectToAction("Details", new { id = vm.Post.Id });
-            } 
+            }
             catch
             {
                 vm.CategoryOptions = _categoryRepository.GetAll();
