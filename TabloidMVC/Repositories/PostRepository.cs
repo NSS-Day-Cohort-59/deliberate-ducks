@@ -204,5 +204,23 @@ namespace TabloidMVC.Repositories
                 }
             };
         }
+
+        public void UpdatePost(Post post)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                    UPDATE Post
+                    SET
+                        Title = @title,
+                        Content = @content,
+                        "
+                }
+            }
+        }
     }
 }
