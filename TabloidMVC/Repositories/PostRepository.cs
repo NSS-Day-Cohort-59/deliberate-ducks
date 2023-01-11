@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Reflection.PortableExecutable;
+using System.Security.Claims;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using TabloidMVC.Models;
@@ -150,6 +151,10 @@ namespace TabloidMVC.Repositories
                         VALUES (
                             @Title, @Content, @ImageLocation, @CreateDateTime, @PublishDateTime,
                             @IsApproved, @CategoryId, @UserProfileId )";
+
+                    post.CreateDateTime = DateTime.Now;
+                    post.IsApproved = true;
+                    
                     cmd.Parameters.AddWithValue("@Title", post.Title);
                     cmd.Parameters.AddWithValue("@Content", post.Content);
                     cmd.Parameters.AddWithValue("@ImageLocation", DbUtils.ValueOrDBNull(post.ImageLocation));
