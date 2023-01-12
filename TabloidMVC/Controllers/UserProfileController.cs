@@ -1,8 +1,10 @@
 ﻿
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Security.Claims;
 using TabloidMVC.Models;
 using TabloidMVC.Repositories;
 
@@ -18,6 +20,8 @@ namespace TabloidMVC.Controllers
             _profileRepo = profileRepo;
         }
         // GET: UserProfileController
+
+        [Authorize(Roles ="admin")]
         public ActionResult Index()
         {
             List<UserProfile> users = _profileRepo.GetAllUsers();
@@ -46,7 +50,7 @@ namespace TabloidMVC.Controllers
             {
                 _profileRepo.AddUser(user);
 
-                return RedirectToAction("Index");
+                return RedirectToAction("Index", "Home");
             }
             catch (Exception ex)
             {
@@ -94,6 +98,12 @@ namespace TabloidMVC.Controllers
             {
                 return View();
             }
+        }
+
+        private int GetCurrentUserId()
+        {
+            string id = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            return int.Parse(id);
         }
     }
 }
