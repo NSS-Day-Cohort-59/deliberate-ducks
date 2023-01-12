@@ -80,6 +80,28 @@ namespace TabloidMVC.Repositories
                 }
             }
         }
+
+        public void UpdateTag(Tag tag) 
+        {
+            using (SqlCommand cmd = Connection.CreateCommand()) 
+            {
+                Connection.Open();
+
+                using (SqlCommand cmd = Connection.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                        UPDATE Tag
+                        SET [Name] = @name
+                        WHERE Id = @id
+                        ";
+
+                    cmd.Parameters.AddWithValue("@name", tag.Name);
+                    cmd.Parameters.AddWithValue("@id", tag.Id);
+                    cmd.ExecuteNonQuery();
+
+                }
+            }
+        }
     }
 }
 
