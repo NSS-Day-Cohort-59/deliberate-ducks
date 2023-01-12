@@ -37,25 +37,40 @@ namespace TabloidMVC.Controllers
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, userProfile.Id.ToString()),
-                new Claim(ClaimTypes.Email, userProfile.Email),
+                new Claim(ClaimTypes.Email, userProfile.Email)
             };
+                if (userProfile.Email.StartsWith("ad"))
+            {
+                claims.Add(new Claim(ClaimTypes.Role, "admin"));
+            }
+            else
+            { claims.Add(new Claim(ClaimTypes.Role, "user")); }
+             
+        var claimsIdentity = new ClaimsIdentity(
+                    claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
-            var claimsIdentity = new ClaimsIdentity(
-                claims, CookieAuthenticationDefaults.AuthenticationScheme);
-
-            await HttpContext.SignInAsync(
-                CookieAuthenticationDefaults.AuthenticationScheme,
-                new ClaimsPrincipal(claimsIdentity));
+        await HttpContext.SignInAsync(
+            CookieAuthenticationDefaults.AuthenticationScheme,
+                    new ClaimsPrincipal(claimsIdentity));
 
             return RedirectToAction("Index", "Home");
-        }
 
-     
+    }
 
-        public async Task<IActionResult> Logout()
-        {
-            await HttpContext.SignOutAsync();
-            return RedirectToAction("Index", "Home");
-        }
+
+
+
+    private int GetCurrentUserId()
+    {
+        string id = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        return int.Parse(id);
+    }
+
+    public async Task<IActionResult> Logout()
+    {
+        await HttpContext.SignOutAsync();
+        return RedirectToAction("Index", "Home");
     }
 }
+}
+
