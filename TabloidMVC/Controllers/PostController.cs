@@ -8,6 +8,7 @@ using System.Security.Claims;
 using TabloidMVC.Models;
 using TabloidMVC.Models.ViewModels;
 using TabloidMVC.Repositories;
+using System;
 
 namespace TabloidMVC.Controllers
 {
@@ -92,15 +93,17 @@ namespace TabloidMVC.Controllers
         //POST
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(int Id, IFormCollection collection)
+        public IActionResult Edit(int Id, Post post)
         {
+            Console.WriteLine("anything");
             try
             {
-                return RedirectToAction(nameof(Details));
+                _postRepository.UpdatePost(post);
+                return RedirectToAction("Details", new {Id = @Id});
             }
-            catch
+            catch (Exception ex)
             {
-                return View();
+                return View(post);
             }
         }
     }

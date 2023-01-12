@@ -221,7 +221,7 @@ namespace TabloidMVC.Repositories
                         CategoryId = @categoryId,
                         PublishDateTime = @publishDateTime
                     WHERE Id = @id";
-
+                    cmd.Parameters.AddWithValue("@id", post.Id);
                     cmd.Parameters.AddWithValue("@title", post.Title);
                     cmd.Parameters.AddWithValue("@content", post.Content);
                     cmd.Parameters.AddWithValue("@imageLocation", post.ImageLocation == null ? DBNull.Value : post.ImageLocation);
