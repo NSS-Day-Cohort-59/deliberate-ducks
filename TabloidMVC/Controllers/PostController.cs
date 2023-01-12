@@ -25,18 +25,9 @@ namespace TabloidMVC.Controllers
 
         public IActionResult Index()
         {
-
-            int userId = GetCurrentUserProfileId();
+   
             var posts = _postRepository.GetAllPublishedPosts();
-            List<Post> postsList = new List<Post>();
-            foreach (Post post in posts)
-            {
-                if (post.UserProfileId == userId)
-                {
-                    postsList.Add(post);
-                }
-            }
-            return View(postsList);
+            return View(posts);
         }
 
         public IActionResult Details(int id)
@@ -73,7 +64,7 @@ namespace TabloidMVC.Controllers
                 _postRepository.Add(vm.Post);
 
                 return RedirectToAction("Details", new { id = vm.Post.Id });
-            }
+            } 
             catch
             {
                 vm.CategoryOptions = _categoryRepository.GetAll();
@@ -90,7 +81,7 @@ namespace TabloidMVC.Controllers
         //GET
         public IActionResult Edit(int id)
         {
-            int userId = GetCurrentUserId();
+            int userId = GetCurrentUserProfileId();
             Post post = _postRepository.GetUserPostById(id, userId);
            
             if(post == null) 
@@ -111,16 +102,6 @@ namespace TabloidMVC.Controllers
             {
                 return View();
             }
-        }
-
-        private int GetCurrentUserId()
-        {
-            string id = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (id != null)
-            {
-                return int.Parse(id);
-            }
-            else { return 0; };
         }
     }
 }
