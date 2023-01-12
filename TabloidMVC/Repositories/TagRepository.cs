@@ -83,7 +83,7 @@ namespace TabloidMVC.Repositories
 
         public void UpdateTag(Tag tag) 
         {
-            using (SqlCommand cmd = Connection.CreateCommand()) 
+            using (SqlConnection connection = Connection)
             {
                 Connection.Open();
 
