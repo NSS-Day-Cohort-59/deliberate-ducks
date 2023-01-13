@@ -67,7 +67,8 @@ namespace TabloidMVC.Repositories
                     cmd.CommandText = @"
                         SELECT u.Id, u.DisplayName, u.FirstName, u.LastName, u.Email, u.CreateDateTime, u.ImageLocation, u.UserTypeId, ut.Name
 	                        FROM UserProfile u
-	                        JOIN UserType ut ON ut.Id = u.UserTypeId;";
+	                        JOIN UserType ut ON ut.Id = u.UserTypeId
+                            WHERE u.Id = @id;";
 
                     cmd.Parameters.AddWithValue("@id", id);
 
@@ -109,7 +110,7 @@ namespace TabloidMVC.Repositories
                 conn.Open();
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = @"SELECT Id, DisplayName, Email, CreateDateTime, UserTypeId 
+                    cmd.CommandText = @"SELECT Id, FirstName, LastName, DisplayName, Email, CreateDateTime, UserTypeId 
                                         FROM UserProfile;";
 
                     using (SqlDataReader reader = cmd.ExecuteReader())
@@ -121,6 +122,8 @@ namespace TabloidMVC.Repositories
                             {
                                 Id = reader.GetInt32(reader.GetOrdinal("Id")),
                                 DisplayName = reader.GetString(reader.GetOrdinal("DisplayName")),
+                                FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
+                                LastName = reader.GetString(reader.GetOrdinal("LastName")),
                                 Email  = reader.GetString(reader.GetOrdinal("Email")),
                                 UserTypeId= reader.GetInt32(reader.GetOrdinal("UserTypeId")),
                                CreateDateTime = reader.GetDateTime(reader.GetOrdinal("CreateDateTime"))
