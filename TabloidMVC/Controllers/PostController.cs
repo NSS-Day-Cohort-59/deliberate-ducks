@@ -79,27 +79,56 @@ namespace TabloidMVC.Controllers
             return int.Parse(id);
         }
 
-        //GET
+        //GET Edit/Id
         public IActionResult Edit(int id)
         {
             int userId = GetCurrentUserProfileId();
             Post post = _postRepository.GetUserPostById(id, userId);
-           
-            if(post == null) 
+
+
+            var vm = new PostEditViewModel();
+            vm.CategoryOptions = _categoryRepository.GetAll();
+            vm.Post = post;
+                       if (post == null) 
             { return NotFound(); }
-            return View(post);
+            return View(vm);
         }
 
-        //POST
+        //POST Edit/Id
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Edit(int Id, Post post)
         {
-            Console.WriteLine("anything");
             try
             {
                 _postRepository.UpdatePost(post);
-                return RedirectToAction("Details", new {Id = @Id});
+                return RedirectToAction("Details", new {Id = @Id });
+            }
+            catch (Exception ex)
+            {
+                return View(post);
+            }
+        }
+
+        //GET
+        public IActionResult Delete(int id)
+        {
+            int userId = GetCurrentUserProfileId();
+            Post post = _postRepository.GetUserPostById(id, userId);
+            if (post == null)
+            { return NotFound(); }
+            return View(post);
+        }
+
+        //POST 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Delete(int id, Post post)
+        {
+            try
+            {
+                _postRepository.DeletePost(id);
+                return RedirectToAction("Index");
             }
             catch (Exception ex)
             {
