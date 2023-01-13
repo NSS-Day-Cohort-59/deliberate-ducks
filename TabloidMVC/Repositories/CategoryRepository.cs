@@ -57,7 +57,7 @@ namespace TabloidMVC.Repositories
                         {
                             Category category = new Category
                             {
-                                Id = reader.GetInt32(reader.GetOrdinal("CategoryId")),
+                                Id = reader.GetInt32(reader.GetOrdinal("Id")),
                                 Name = reader.GetString(reader.GetOrdinal("Name")),
                                 
                                 
@@ -97,7 +97,27 @@ namespace TabloidMVC.Repositories
             }
         }
 
+        public void UpdateCategory(Category category)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
 
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                            UPDATE Category
+                            SET 
+                                [Name] = @name
+                            WHERE Id = @id";
+
+                    cmd.Parameters.AddWithValue("@name", category.Name);
+                    cmd.Parameters.AddWithValue("@id", category.Id);
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
 
 
     }
