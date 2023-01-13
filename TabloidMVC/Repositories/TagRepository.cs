@@ -4,6 +4,7 @@ using System.Data;
 using System.Reflection.PortableExecutable;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 using TabloidMVC.Models;
 using TabloidMVC.Utils;
 
@@ -52,13 +53,24 @@ namespace TabloidMVC.Repositories
                 using (SqlCommand cmd = connection.CreateCommand())
                 {
                     cmd.CommandText = @"
-                        Select [Name]
+                        Select Id, [Name]
                         From Tag
                         Where Id = @id";
 
                     cmd.Parameters.AddWithValue("@id", id);
 
-                    return new Tag { Id = id, Name = (string)cmd.ExecuteScalar() };
+
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            return NewTagFromReader(reader);
+                        }
+                        else
+                        {
+                            return null;
+                        }
+                    }
                 }
             }
         }
@@ -81,13 +93,13 @@ namespace TabloidMVC.Repositories
             }
         }
 
-        public void UpdateTag(Tag tag) 
+        public void UpdateTag(Tag tag)
         {
             using (SqlConnection connection = Connection)
             {
-                Connection.Open();
+                connection.Open();
 
-                using (SqlCommand cmd = Connection.CreateCommand())
+                using (SqlCommand cmd = connection.CreateCommand())
                 {
                     cmd.CommandText = @"
                         UPDATE Tag
@@ -101,6 +113,15 @@ namespace TabloidMVC.Repositories
 
                 }
             }
+        }
+        private Tag NewTagFromReader(SqlDataReader reader)
+        {
+            return new Tag
+            {
+                Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                Name = reader.GetString(reader.GetOrdinal("Name"))
+            };
+
         }
     }
 }
