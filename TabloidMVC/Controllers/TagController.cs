@@ -31,11 +31,6 @@ namespace TabloidMVC.Controllers
             return View(tags);
         }
 
-        // GET: TagController/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
 
         // GET: TagController/Create
         [Authorize]
@@ -47,6 +42,7 @@ namespace TabloidMVC.Controllers
 
         // POST: TagController/Create
         [HttpPost]
+
         [ValidateAntiForgeryToken]
         public ActionResult Create(Tag tag)
         {
@@ -63,23 +59,32 @@ namespace TabloidMVC.Controllers
         }
 
         // GET: TagController/Edit/5
+       
         public ActionResult Edit(int id)
         {
-            return View();
+            Tag tag = _tagRepository.GetTagById(id);
+            if (tag == null)
+            {
+                return NotFound();
+            }
+
+            return View(tag);
         }
 
         // POST: TagController/Edit/5
         [HttpPost]
+        
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult Edit(int id, Tag tag)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                _tagRepository.UpdateTag(tag);
+                return RedirectToAction("Index");
             }
-            catch
+            catch (Exception ex)
             {
-                return View();
+                return View(tag);
             }
         }
 
