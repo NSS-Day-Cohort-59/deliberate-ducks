@@ -114,6 +114,24 @@ namespace TabloidMVC.Repositories
                 }
             }
         }
+
+        public void DeleteTag(int id) 
+        {
+            using (SqlConnection connection = Connection) 
+            {
+                connection.Open();
+                using (SqlCommand cmd = connection.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                        DELETE FROM Tag
+                        WHERE Id = @id
+                        ";
+                    cmd.Parameters.AddWithValue("@id", id);
+                    cmd.ExecuteNonQuery();
+
+                }
+            }
+        }
         private Tag NewTagFromReader(SqlDataReader reader)
         {
             return new Tag
